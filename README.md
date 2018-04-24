@@ -74,18 +74,18 @@ class MyService {
 
 #### Utilisation des interfaces
 ```typescript
-interface IServiceData {
+export interface IServiceData {
   id: number;
   name: string;
   description?: string;
 }
 
-interface IService {
+export interface IService {
   get data(): IServiceData;
   set data(pData: IServiceData): void;
 }
 
-class MyService implements IService {
+export class MyService implements IService {
   private _data: Object;
 
   constructor(pData: IServiceData) {
@@ -114,6 +114,52 @@ const serviceData: IServiceData = {
   name: 'my name'
 };
 
+// Usage
 const myServiceInstance = new MyService(serviceData);
 console.log(myServiceInstance.data.name.length); //-> 7
+```
+
+#### Heritage
+```typescript
+import { MyService, IService, IServiceData } from './my-service.ts';
+
+export interface IServiceDataOriginFrom {
+  country: string;
+  city: string;
+  lang: string;
+}
+
+export interface IServiceAdditionalData {
+  age?: number;
+  address?: string;
+  title?: string;
+  from?: IServiceDataOriginFrom
+}
+
+export interface IServiceExtendedData extends IServiceData, IServiceAdditionalData {
+  updatedAt: Date; 
+}
+
+export interface IServiceExtended extends IService {
+  static extend(pData: IServiceData, toMerge: IServiceAdditionalData): IServiceExtendedData;
+}
+
+export class ServiceExtended extends MyService implements IServiceExtended {
+  private _data: IServiceExtendedData;
+
+  constructor(pData: IServiceData, toMerge: IServiceAdditionalData) {
+    super(ServiceExtended.merge(pData, toMerge));
+  }
+  
+  static merge(pData: IServiceData, toMerge: IServiceAdditionalData): IServiceExtendedData {
+    return Object.assign({}, pData, toMerge, {
+    	updateAt: new Date()
+    });
+  }
+}
+
+const data: IServiceData = {id: 34, name: 'my name'};
+const additionalData: IServiceAdditionalData = {age: 24, title: 'frontend developper'};
+const extendedData = new ServiceExtended(data, additionalData);
+console.log(extendedData.age, extendedData.updateAt.toString()); //-> 24
 ```

@@ -71,3 +71,49 @@ class MyService {
   }
 }
 ```
+
+#### Utilisation des interfaces
+```typescript
+interface IServiceData {
+  id: number;
+  name: string;
+  description?: string;
+}
+
+interface IService {
+  get data(): IServiceData;
+  set data(pData: IServiceData): void;
+}
+
+class MyService implements IService {
+  private _data: Object;
+
+  constructor(pData: IServiceData) {
+    this._data = pData;
+  }
+  
+  get data(): IServiceData {
+    return this._data;
+  }
+
+  set data(pData: IServiceData): void {
+    this._merge(pData);
+  }
+
+  private _merge(pData: IServiceData): void {
+    for (let p in pData) {
+      if (this._data[p] !=== undefined && typeof this._data[p] === typeof pData[p]) {
+        this._data[p] = pData[p];
+      }
+    }
+  }
+}
+
+const serviceData: IServiceData = {
+  id: 1,
+  name: 'my name'
+};
+
+const myServiceInstance = new MyService(serviceData);
+console.log(myServiceInstance.data.name.length); //-> 7
+```

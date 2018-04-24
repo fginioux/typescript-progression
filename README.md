@@ -1,12 +1,8 @@
 # typescript-progression
 Stratégie de progression du code de Javascript vers Typescript
 
+### Exemple javascript service avec propriété "privée"
 ```typescript
-/**
-* @description
-* Javascript
-*/
-
 (function(){
   var MyService = function(pData) {
     var _data = pData;
@@ -26,3 +22,5 @@ Stratégie de progression du code de Javascript vers Typescript
   };
 })();
 ```
+
+

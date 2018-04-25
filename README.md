@@ -81,12 +81,11 @@ export interface IServiceData {
 }
 
 export interface IService {
-  get data(): IServiceData;
-  set data(pData: IServiceData): void;
+  data: IServiceData;
 }
 
 export class MyService implements IService {
-  private _data: Object;
+  private _data: IServiceData;
 
   constructor(pData: IServiceData) {
     this._data = pData;
@@ -96,13 +95,13 @@ export class MyService implements IService {
     return this._data;
   }
 
-  set data(pData: IServiceData): void {
+  set data(pData: IServiceData) {
     this._merge(pData);
   }
 
   private _merge(pData: IServiceData): void {
     for (let p in pData) {
-      if (this._data[p] !=== undefined && typeof this._data[p] === typeof pData[p]) {
+      if (this._data[p] !== undefined && typeof this._data[p] === typeof pData[p]) {
         this._data[p] = pData[p];
       }
     }
@@ -140,20 +139,20 @@ export interface IServiceExtendedData extends IServiceData, IServiceAdditionalDa
   updatedAt: Date; 
 }
 
-export interface IServiceExtended extends IService {
-  static extend(pData: IServiceData, toMerge: IServiceAdditionalData): IServiceExtendedData;
+export class ServiceExtendedAbstract extends MyService {
+  static extend(pData: IServiceData, toMerge: IServiceAdditionalData): any {
+    return {};
+  }
 }
 
-export class ServiceExtended extends MyService implements IServiceExtended {
-  private _data: IServiceExtendedData;
-
+export class ServiceExtended extends ServiceExtendedAbstract {
   constructor(pData: IServiceData, toMerge: IServiceAdditionalData) {
-    super(ServiceExtended.merge(pData, toMerge));
+    super(ServiceExtended.extend(pData, toMerge));
   }
-  
-  static merge(pData: IServiceData, toMerge: IServiceAdditionalData): IServiceExtendedData {
+
+  static extend(pData: IServiceData, toMerge: IServiceAdditionalData): IServiceExtendedData {
     return Object.assign({}, pData, toMerge, {
-    	updateAt: new Date()
+    	updatedAt: new Date()
     });
   }
 }
